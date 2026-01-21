@@ -1,0 +1,159 @@
+<%- contentFor('head') %>
+  <style>
+    .form-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .form-title {
+      color: #2d3748;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      position: relative;
+      padding-bottom: 0.5rem;
+    }
+    .form-title:after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 60px;
+      height: 4px;
+      background: #4361ee;
+      border-radius: 2px;
+    }
+    .form-label {
+      font-weight: 500;
+      color: #4a5568;
+      margin-bottom: 0.5rem;
+    }
+    .form-control, .form-select {
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s ease;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: #4361ee;
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+    }
+    textarea.form-control {
+      min-height: 250px;
+    }
+    .mood-option {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  </style>
+<%- contentFor('body') %>
+
+<div class="container py-5">
+  <div class="form-container">
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-4 p-md-5">
+        <h1 class="h3 form-title mb-4">New Diary Entry</h1>
+        
+        <% if (typeof error !== 'undefined') { %>
+          <div class="alert alert-danger d-flex align-items-center mb-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <div><%= error %></div>
+          </div>
+        <% } %>
+        
+        <form action="/diary" method="POST" class="needs-validation" novalidate>
+          <div class="mb-4">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control form-control-lg" id="title" name="title" required 
+                   placeholder="What's on your mind?"
+                   value="<%= entry && entry.title ? entry.title : '' %>">
+            <div class="invalid-feedback">
+              Please provide a title for your entry.
+            </div>
+          </div>
+          
+          <div class="mb-4">
+            <label for="content" class="form-label">Your Thoughts</label>
+            <textarea class="form-control" id="content" name="content" rows="8" required
+                      placeholder="Write your thoughts here..."><%= entry && entry.content ? entry.content : '' %></textarea>
+            <div class="invalid-feedback">
+              Please write something in your diary entry.
+            </div>
+          </div>
+          
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label for="mood" class="form-label">How are you feeling?</label>
+              <select class="form-select" id="mood" name="mood" required>
+                <option value="" disabled selected>Select your mood</option>
+                <option value="happy" <%= entry && entry.mood === 'happy' ? 'selected' : '' %>>
+                  <span class="mood-option">😊 Happy</span>
+                </option>
+                <option value="sad" <%= entry && entry.mood === 'sad' ? 'selected' : '' %>>
+                  <span class="mood-option">😢 Sad</span>
+                </option>
+                <option value="excited" <%= entry && entry.mood === 'excited' ? 'selected' : '' %>>
+                  <span class="mood-option">😃 Excited</span>
+                </option>
+                <option value="angry" <%= entry && entry.mood === 'angry' ? 'selected' : '' %>>
+                  <span class="mood-option">😠 Angry</span>
+                </option>
+                <option value="grateful" <%= entry && entry.mood === 'grateful' ? 'selected' : '' %>>
+                  <span class="mood-option">🙏 Grateful</span>
+                </option>
+                <option value="tired" <%= entry && entry.mood === 'tired' ? 'selected' : '' %>>
+                  <span class="mood-option">😴 Tired</span>
+                </option>
+                <option value="loved" <%= entry && entry.mood === 'loved' ? 'selected' : '' %>>
+                  <span class="mood-option">❤️ Loved</span>
+                </option>
+                <option value="other" <%= !entry || !entry.mood || entry.mood === 'other' ? 'selected' : '' %>>
+                  <span class="mood-option">🤔 Other</span>
+                </option>
+              </select>
+              <div class="invalid-feedback">
+                Please select how you're feeling.
+              </div>
+            </div>
+            
+            <div class="col-md-6 d-flex align-items-end">
+              <div class="form-check form-switch w-100">
+                <input class="form-check-input" type="checkbox" role="switch" id="isPrivate" 
+                       name="isPrivate" <%= entry && entry.isPrivate ? 'checked' : 'checked' %>>
+                <label class="form-check-label ms-2" for="isPrivate">
+                  <i class="bi bi-lock-fill me-1"></i> Keep this entry private
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+            <a href="/diary" class="btn btn-outline-secondary px-4">
+              <i class="bi bi-arrow-left me-2"></i>Cancel
+            </a>
+            <button type="submit" class="btn btn-primary px-4">
+              <i class="bi bi-journal-plus me-2"></i>Save Entry
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Form validation
+(function () {
+  'use strict'
+  var forms = document.querySelectorAll('.needs-validation')
+  Array.prototype.slice.call(forms)
+    .forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+        form.classList.add('was-validated')
+      }, false)
+    })
+})()
+</script>

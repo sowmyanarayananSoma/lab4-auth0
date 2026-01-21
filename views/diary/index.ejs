@@ -1,0 +1,135 @@
+<%- contentFor('head') %>
+  <style>
+    .diary-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .diary-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .mood-badge {
+      font-size: 0.8rem;
+      padding: 0.35em 0.8em;
+      border-radius: 15px;
+    }
+    .entry-content {
+      line-clamp: 3;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      color: #4a5568;
+    }
+  </style>
+<%- contentFor('body') %>
+
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0 text-primary">My Diary Entries</h1>
+    <a href="/diary/new" class="btn btn-primary">
+      <i class="bi bi-plus-circle me-1"></i> New Entry
+    </a>
+  </div>
+
+  <% if (entries.length === 0) { %>
+    <div class="text-center py-5 my-5">
+      <div class="mb-4">
+        <i class="bi bi-journal-text" style="font-size: 4rem; color: #e9ecef;"></i>
+      </div>
+      <h2 class="h4 mb-3">Your diary is empty</h2>
+      <p class="text-muted mb-4">Start documenting your thoughts, feelings, and memories.</p>
+      <a href="/diary/new" class="btn btn-primary btn-lg">
+        <i class="bi bi-plus-circle me-2"></i>Create Your First Entry
+      </a>
+    </div>
+  <% } else { %>
+ 
+    <div class="row g-4">
+      <% entries.forEach(entry => { %>
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card h-100 diary-card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <h5 class="card-title mb-0">
+                  <a href="/diary/<%= entry._id %>" class="text-decoration-none text-dark">
+                    <%= entry.title || 'Untitled Entry' %>
+                  </a>
+                </h5>
+                <span class="badge <%= 
+                  entry.mood === 'happy' ? 'bg-success' : 
+                  entry.mood === 'sad' ? 'bg-info' :
+                  entry.mood === 'excited' ? 'bg-warning' :
+                  entry.mood === 'angry' ? 'bg-danger' :
+                  entry.mood === 'grateful' ? 'bg-success' :
+                  entry.mood === 'tired' ? 'bg-secondary' :
+                  entry.mood === 'loved' ? 'bg-danger' : 'bg-dark'
+                %> mood-badge">
+                  <i class="bi <%= 
+                    entry.mood === 'happy' ? 'bi-emoji-smile' : 
+                    entry.mood === 'sad' ? 'bi-emoji-frown' :
+                    entry.mood === 'excited' ? 'bi-emoji-laughing' :
+                    entry.mood === 'angry' ? 'bi-emoji-angry' :
+                    entry.mood === 'grateful' ? 'bi-emoji-heart-eyes' :
+                    entry.mood === 'tired' ? 'bi-emoji-yawn' :
+                    entry.mood === 'loved' ? 'bi-heart-fill' : 'bi-emoji-neutral'
+                  %> me-1"></i>
+                  <%= entry.mood ? entry.mood.charAt(0).toUpperCase() + entry.mood.slice(1) : 'Neutral' %>
+                </span>
+              </div>
+              
+              <p class="text-muted small mb-2">
+                <i class="bi bi-calendar3 me-1"></i>
+                <%= new Date(entry.date).toLocaleDateString('en-US', { 
+                  year: 'numeric', 
+                  month: 'short', 
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                }) %>
+                <% if (entry.isPrivate) { %>
+                  <span class="ms-2"><i class="bi bi-lock-fill"></i></span>
+                <% } %>
+              </p>
+              
+              <p class="card-text entry-content">
+                <%= entry.content.replace(/<[^>]*>?/gm, '').substring(0, 150) %>...
+              </p>
+              
+              <div class="d-flex justify-content-between align-items-center">
+                <a href="/diary/<%= entry._id %>" class="btn btn-sm btn-outline-primary">
+                  <i class="bi bi-eye me-1"></i> Read More
+                </a>
+                <div class="dropdown">
+                  <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-three-dots-vertical"></i>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a class="dropdown-item" href="/diary/<%= entry._id %>/edit">
+                        <i class="bi bi-pencil me-2"></i>Edit
+                      </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                      <form action="/diary/<%= entry._id %>?_method=DELETE" method="POST" class="d-inline">
+                        <button type="submit" class="dropdown-item text-danger" 
+                                onclick="return confirm('Are you sure you want to delete this entry?')">
+                          <i class="bi bi-trash me-2"></i>Delete
+                        </button>
+                      </form>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

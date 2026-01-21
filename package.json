@@ -1,0 +1,35 @@
+{
+  "name": "secret-diary",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A secure and private diary application",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "debug": "node --inspect=9929 app.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-ejs-layouts": "^2.5.1",
+    "method-override": "^3.0.0",
+    "mongoose": "^8.16.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "keywords": [
+    "diary",
+    "journal",
+    "personal",
+    "private",
+    "notes"
+  ],
+  "author": "",
+  "license": "MIT"
+}
